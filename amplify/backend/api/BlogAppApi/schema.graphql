@@ -1,0 +1,11 @@
+type Post @model {
+  id: ID!
+  title: String!
+  rating: Int
+  content: String
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
