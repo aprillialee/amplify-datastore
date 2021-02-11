@@ -5,7 +5,7 @@ import "./App.css";
 import styled from "styled-components";
 
 import { DataStore } from "@aws-amplify/datastore";
-import { Post } from "./models";
+import { Post, Comment } from "./models";
 
 import Amplify from "@aws-amplify/core";
 import config from "./aws-exports";
@@ -17,6 +17,8 @@ function App() {
   const [postState, updatePostState] = useState(initialState);
   const [posts, updatePosts] = useState([]);
 
+  const [id, setID] = useState("");
+
   useEffect(() => {
     fetchPosts();
     const subscription = DataStore.observe(Post).subscribe(() => fetchPosts());
@@ -25,6 +27,11 @@ function App() {
 
   function onChange(e) {
     updatePostState({ title: e.target.value });
+  }
+
+  async function deletePost(id) {
+    const toDelete = await DataStore.query(Post, id);
+    DataStore.delete(toDelete);
   }
 
   async function fetchPosts() {
@@ -37,12 +44,22 @@ function App() {
     await DataStore.save(new Post({ ...postState }));
     updatePostState(initialState);
   }
+
   return (
     <div>
       <InputStyled onChange={onChange} name="title" value={postState.title} />
       <ButtonStyled onClick={createPost}>Create Post</ButtonStyled>
       {posts.map((post) => (
-        <p key={post.id}>{post.title}</p>
+        <p key={post.id}>
+          {post.title}
+          <ButtonStyled
+            onClick={() => {
+              deletePost(post.id);
+            }}
+          >
+            Delete Post
+          </ButtonStyled>
+        </p>
       ))}
     </div>
   );

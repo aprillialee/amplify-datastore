@@ -17,19 +17,19 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "rating": {
-                    "name": "rating",
-                    "isArray": false,
-                    "type": "Int",
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
                     "isRequired": false,
-                    "attributes": []
-                },
-                "content": {
-                    "name": "content",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "postID"
+                    }
                 }
             },
             "syncable": true,
@@ -38,6 +38,50 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                }
+            ]
+        },
+        "Comment": {
+            "name": "Comment",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "postID": {
+                    "name": "postID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "content": {
+                    "name": "content",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                }
+            },
+            "syncable": true,
+            "pluralName": "Comments",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byPost",
+                        "fields": [
+                            "postID",
+                            "content"
+                        ]
+                    }
                 }
             ]
         }
@@ -52,5 +96,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "53821ae4b32d5b17281c29ed65cae488"
+    "version": "a2c607eeec755c09dfee5238b84985d1"
 };

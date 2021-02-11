@@ -1,10 +1,14 @@
 type Post @model {
   id: ID!
   title: String!
-  rating: Int
-  content: String
+  comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
 }
 
+type Comment @model @key(name: "byPost", fields: ["postID", "content"]) {
+  id: ID!
+  postID: ID!
+  content: String!
+}
 enum PostStatus {
   DRAFT
   PUBLISHED
