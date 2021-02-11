@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from "react";
 
-import logo from "./logo.svg";
 import "./App.css";
 import styled from "styled-components";
 
 import { DataStore } from "@aws-amplify/datastore";
 import { Post, Comment } from "./models";
 
+import { listPosts } from "./graphql-custom/queries";
+
+import { API, graphqlOperation } from "@aws-amplify/core";
 import Amplify from "@aws-amplify/core";
 import config from "./aws-exports";
 Amplify.configure(config);
 
 const initialState = { title: "" };
+
+const listPosts = async (limit = 10, nextToken = null) => {
+  //Download all subjects.
+  try {
+    const allPostData = await API.graphql({
+      query: listPosts,
+      variables: {
+        limit: limit,
+        nextToken: nextToken,
+      },
+    });
+    console.log(`****** allPosts: ${JSON.stringify(allPostData)}`);
+
+    const allPosts = allPostData.data.listPosts.items;
+
+    return allPosts;
+  } catch (error) {
+    console.log(`!!!!Error getting subjects!!: ${JSON.stringify(error)}`);
+  }
+};
 
 function App() {
   const [postState, updatePostState] = useState(initialState);
@@ -22,6 +44,7 @@ function App() {
   useEffect(() => {
     fetchPosts();
     const subscription = DataStore.observe(Post).subscribe(() => fetchPosts());
+    listPosts();
     return () => subscription.unsubscribe();
   });
 
